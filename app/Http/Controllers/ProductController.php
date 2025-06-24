@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
 use App\Models\Product;
+use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
+    public function __construct(protected ProductService $service)
+    {
+    }
+
     public function getProducts(): JsonResponse
     {
         $products = Product::all();
@@ -30,7 +35,7 @@ class ProductController extends Controller
 
     public function createProduct(ProductRequest $request): JsonResponse
     {
-        $product = Product::create($request->validated());
+        $product = $this->service->create($request->validated());
 
         return response()->json($product, 201);
     }
@@ -44,7 +49,7 @@ class ProductController extends Controller
                 'message' => 'Product not found',
             ], 404);
         }
-        $product->update($request->validated());
+        $product = $this->service->update($product, $request->validated());
 
         return response()->json($product);
     }
@@ -58,7 +63,7 @@ class ProductController extends Controller
                 'message' => 'Product not found',
             ], 404);
         }
-        $product->delete();
+        $this->service->delete($product);
 
         return response()->json(null, 204);
     }

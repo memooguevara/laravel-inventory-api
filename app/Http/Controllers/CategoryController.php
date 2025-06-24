@@ -4,12 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
+use App\Services\CategoryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
+    public function __construct(protected CategoryService $service)
+    {
+    }
+
     public function getCategories(): JsonResponse
     {
         $categories = Category::all();
@@ -32,7 +37,7 @@ class CategoryController extends Controller
 
     public function createCategory(CategoryRequest $request): JsonResponse
     {
-        $category = Category::create($request->validated());
+        $category = $this->service->create($request->validated());
 
         return response()->json($category, 201);
     }
@@ -46,7 +51,7 @@ class CategoryController extends Controller
                 'message' => 'Category not found',
             ], 404);
         }
-        $category->update($request->validated());
+        $category = $this->service->update($category, $request->validated());
 
         return response()->json($category);
     }
@@ -60,7 +65,7 @@ class CategoryController extends Controller
                 'message' => 'Category not found',
             ], 404);
         }
-        $category->delete();
+        $this->service->delete($category);
 
         return response()->json(null, 204);
     }

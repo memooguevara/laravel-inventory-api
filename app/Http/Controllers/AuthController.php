@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\Role;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,20 +15,15 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
+    public function __construct(protected UserService $service)
+    {
+    }
+
     public function register(RegisterRequest $request): JsonResponse
     {
-        $user = Auth::user();
-        $role = ($user && $user->role === Role::ADMIN->value && $request->filled('role'))
-            ? $request->role
-            : Role::USER->value;
-        $newUser = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'role' => $role,
-        ]);
+        $user = $this->service->register($request->validated(), Auth::user());
 
-        return response()->json($newUser, 201);
+        return response()->json($user, 201);
     }
 
     public function login(Request $request): JsonResponse
