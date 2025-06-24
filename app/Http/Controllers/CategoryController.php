@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,27 +30,14 @@ class CategoryController extends Controller
         return response()->json($category);
     }
 
-    public function createCategory(Request $request): JsonResponse
+    public function createCategory(CategoryRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:categories,name',
-            'description' => 'nullable|string|max:1000',
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $validator->errors(),
-            ], 422);
-        }
-        $category = Category::create([
-            'name' => $request->get('name'),
-            'description' => $request->get('description'),
-        ]);
+        $category = Category::create($request->validated());
 
         return response()->json($category, 201);
     }
 
-    public function updateCategory(Request $request, int $id): JsonResponse
+    public function updateCategory(CategoryRequest $request, int $id): JsonResponse
     {
         $category = Category::find($id);
         if (!$category) {
@@ -58,17 +46,7 @@ class CategoryController extends Controller
                 'message' => 'Category not found',
             ], 404);
         }
-        $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|string|max:255|unique:categories,name,' . $id,
-            'description' => 'nullable|string|max:1000',
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $validator->errors(),
-            ], 422);
-        }
-        $category->update($request->only(['name', 'description']));
+        $category->update($request->validated());
 
         return response()->json($category);
     }

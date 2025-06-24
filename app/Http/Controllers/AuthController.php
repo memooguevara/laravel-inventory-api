@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Role;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,31 +14,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-    public function register(Request $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
         $user = Auth::user();
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => [
-                'sometimes',
-                function ($attribute, $value, $fail) use ($user) {
-                    if (!$user || $user->role !== Role::ADMIN->value) {
-                        $fail("You do not have permission to set the {$attribute}.");
-                    }
-                    if (!in_array($value, array_column(Role::cases(), 'value'))) {
-                        $fail("The {$attribute} must be one of the following: " . implode(', ', array_column(Role::cases(), 'value')));
-                    }
-                }
-            ]
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validator->errors(),
-            ], 422);
-        }
         $role = ($user && $user->role === Role::ADMIN->value && $request->filled('role'))
             ? $request->role
             : Role::USER->value;
@@ -60,6 +39,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
+                'message' => 'Validation failed',
                 'errors' => $validator->errors(),
             ], 422);
         }

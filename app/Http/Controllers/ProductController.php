@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -29,33 +28,14 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
-    public function createProduct(Request $request): JsonResponse
+    public function createProduct(ProductRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'sometimes|integer|min:0',
-            'category_id' => 'sometimes|exists:categories,id',
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $validator->errors(),
-            ], 422);
-        }
-        $product = Product::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'stock' => $request->get('stock', 0),
-            'category_id' => $request->category_id,
-        ]);
+        $product = Product::create($request->validated());
 
         return response()->json($product, 201);
     }
 
-    public function updateProduct(Request $request, int $id): JsonResponse
+    public function updateProduct(ProductRequest $request, int $id): JsonResponse
     {
         $product = Product::find($id);
         if (!$product) {
@@ -64,20 +44,7 @@ class ProductController extends Controller
                 'message' => 'Product not found',
             ], 404);
         }
-        $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'price' => 'sometimes|numeric|min:0',
-            'stock' => 'sometimes|integer|min:0',
-            'category_id' => 'sometimes|exists:categories,id',
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $validator->errors(),
-            ], 422);
-        }
-        $product->update($request->only(['name', 'description', 'price', 'stock', 'category_id']));
+        $product->update($request->validated());
 
         return response()->json($product);
     }
@@ -93,9 +60,6 @@ class ProductController extends Controller
         }
         $product->delete();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Product deleted successfully',
-        ]);
+        return response()->json(null, 204);
     }
 }
