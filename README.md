@@ -114,6 +114,34 @@ enum Role: string {
   - CategoryRequest.php 
   - ProductRequest.php
 
+### 🧱 Diseño del Proyecto: Patrones Actions y Services
+Para mejorar la mantenibilidad y escalabilidad del sistema, se implementaron los siguientes patrones:
+
+#### 🎯 Patrón Action
+Cada acción importante del sistema (crear, actualizar, eliminar) se delega a una clase específica dentro de `app/Actions/`.
+Estas clases manejan un solo caso de uso y permiten mantener los controladores delgados y legibles.
+
+Ejemplos:
+
+- `CreateCategory`
+- `UpdateProduct`
+
+#### ⚙️ Patrón Service
+Las clases de servicio en `app/Services/` encapsulan la lógica de negocio reutilizable.
+Esto permite centralizar reglas, validaciones y operaciones que podrían usarse desde controladores, listeners o comandos.
+
+Ejemplos:
+
+- `CategoryService::create(array $data)`
+- `AuthService::register(array $credentials)`
+
+#### 🚀 Ventajas del enfoque
+
+- Código más limpio y fácil de testear. 
+- Controladores más simples. 
+- Claridad en las responsabilidades. 
+- Fácil extensión para nuevos endpoints o cambios de lógica.
+
 ## 🐳 5. Uso con Docker
 Este proyecto incluye configuración básica para levantar el entorno completo con PHP-FPM, Nginx y PostgreSQL usando Docker.
 
