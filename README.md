@@ -22,8 +22,8 @@ Esta es una API REST construida con **Laravel 11**, usando **JWT para autenticac
 
 1. Clona el proyecto
 ```bash
-git clone https://github.com/memooguevara/inventario-api.git
-cd inventario-api
+git clone https://github.com/memooguevara/laravel-inventory-api.git
+cd laravel-inventory-api
 ```
 
 2. Instala dependencias
@@ -46,7 +46,7 @@ php artisan key:generate
 php artisan jwt:secret
 ```
 
-6. Configura tu conexión a base de datos en el .env
+6. Configura tu conexión a base de datos en el `.env`
 ```env
 DB_CONNECTION=mysql # o pqsql
 DB_HOST=host_db
@@ -65,17 +65,36 @@ php artisan migrate --seed
 php artisan serve
 ```
 
+9. Accede al proyecto: http://localhost:8000/api/login
+
+- Usuario Administrador
+```json
+{
+    "email": "admin@mail.com",
+    "password": "password123"
+}
+```
+
+- Usuario Regular
+```json
+{
+    "email": "user@mail.com",
+    "password": "password123"
+}
+```
+
 ## 🧪 2. Documentación de la API (Postman + Swagger)
 
 ### 📫 Colección Postman
 
 1. Importa el archivo postman_collection.json que está en la raíz del proyecto.
-2. Inicia sesión con el endpoint /api/login para obtener el token.
+2. Inicia sesión con el endpoint `/api/login` para obtener el token.
+3. Automáticamente el token se agrega a las variables de entorno.
 
 ### 📖 Documentación Swagger
 
 1. Accede en: http://localhost:8000/api/documentation
-2. Inicia sesión con el endpoint /api/login para obtener el token.
+2. Inicia sesión con el endpoint `/api/login` para obtener el token.
 3. Haz clic en el botón Authorize para autenticarte.
 4. Proporciona tu token JWT.
 
@@ -83,7 +102,7 @@ php artisan serve
 
 ### 🧩 Enums vs Tabla de Roles
 
-- Se utilizó un enum PHP nativo (App\Enums\Role) para definir roles como ADMIN y USER.
+- Se utilizó un enum PHP nativo (`App\Enums\Role`) para definir roles como ADMIN y USER.
 - Esto simplifica el uso en validaciones y lógica de negocio sin necesidad de consultar una tabla adicional.
 
 ```php
@@ -96,25 +115,25 @@ enum Role: string {
 ### 🔐 Middleware de autorización
 
 - Se crearon middleware personalizados:
-    - IsAuthenticated: para proteger rutas con JWT. 
-    - IsAdminUser: para restringir acciones a administradores. 
-- Se evitó usar paquetes como spatie/laravel-permission para mantener la API ligera y simple.
-
-.
+    - `IsAuthenticated`: para proteger rutas con JWT. 
+    - `IsAdminUser`: para permitir acciones avanzadas a administradores. 
+- Se evitó usar paquetes como `spatie/laravel-permission` para mantener la API ligera y simple.
 
 ### 🛠 Cambios al esquema de base de datos
+
 - El modelo users incluye una columna role (string) en lugar de una relación con tabla roles.
 - Se agregaron migraciones personalizadas para incluir datos iniciales (admin@mail.com).
-- Se añadió category_id en products como clave foránea.
+- Se añadió `category_id` en products como clave foránea.
 
 ### 📊 Estructura de validación
 
 - Todos los controladores usan clases FormRequest para mantener limpio el controlador:
-  - RegisterRequest.php 
-  - CategoryRequest.php 
-  - ProductRequest.php
+  - `RegisterRequest.php`
+  - `CategoryRequest.php`
+  - `ProductRequest.php`
 
 ### 🧱 Diseño del Proyecto: Patrones Actions y Services
+
 Para mejorar la mantenibilidad y escalabilidad del sistema, se implementaron los siguientes patrones:
 
 #### 🎯 Patrón Action
