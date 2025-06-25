@@ -2,6 +2,11 @@
 
 Esta es una API REST construida con **Laravel 11**, usando **JWT para autenticación**, validación con **Form Requests**, documentación con **Swagger**, y buenas prácticas de estructura limpia.
 
+## 🔗 Url del proyecto
+
+- URL del proyecto: https://ims.pragmaticos.com.co
+- Documentación Swagger: https://ims.pragmaticos.com.co/api/documentation
+
 ---
 
 ## 🚀 1. Instalación local
