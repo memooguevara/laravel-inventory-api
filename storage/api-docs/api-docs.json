@@ -1,0 +1,587 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Inventory Management System API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Registrar un nuevo usuario",
+                "operationId": "8a56853624e025573120a09a4c75d468",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Jonathan Guevara"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "memmoguevara@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "enum": [
+                                            "admin",
+                                            "user"
+                                        ],
+                                        "example": "admin"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuario registrado exitosamente"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Iniciar sesión",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "memooguevara@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Inicio de sesión exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciales inválidas"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Cerrar sesión",
+                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "responses": {
+                    "200": {
+                        "description": "Cierre de sesión exitoso"
+                    },
+                    "500": {
+                        "description": "Error al cerrar sesión"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/me": {
+            "get": {
+                "tags": [
+                    "Autenticación",
+                    "Usuario"
+                ],
+                "summary": "Obtener información del usuario autenticado",
+                "operationId": "9d9bc556f927575aa492a88c28fe5908",
+                "responses": {
+                    "200": {
+                        "description": "Información del usuario"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Categorías"
+                ],
+                "summary": "Obtener todas las categorías",
+                "operationId": "6efefb371e1af85d36f41590622d9b62",
+                "responses": {
+                    "200": {
+                        "description": "Lista de categorías"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Categorías"
+                ],
+                "summary": "Crear una nueva categoría",
+                "operationId": "4a4fe692ca8e514b22c02ef5416b9109",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Electronics"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Category for electronic products"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Categoría creada exitosamente"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/categories/{id}": {
+            "get": {
+                "tags": [
+                    "Categorías"
+                ],
+                "summary": "Obtener una categoría por ID",
+                "operationId": "4a0fc9d5291816863005418b358bf238",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categoría encontrada"
+                    },
+                    "404": {
+                        "description": "Categoría no encontrada"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Categorías"
+                ],
+                "summary": "Eliminar una categoría",
+                "operationId": "5fceece59f601f7bc6663547e7be4f35",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Categoría eliminada exitosamente"
+                    },
+                    "404": {
+                        "description": "Categoría no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Categorías"
+                ],
+                "summary": "Actualizar una categoría existente",
+                "operationId": "30245aaa3b76b141dd0e3a5222df75d9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Electronics"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Category for electronic products"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Categoría actualizada exitosamente"
+                    },
+                    "404": {
+                        "description": "Categoría no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Obtener todos los productos",
+                "operationId": "9825833dfca153a232f3076fa4540b35",
+                "responses": {
+                    "200": {
+                        "description": "Lista de productos"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Crear un nuevo producto",
+                "operationId": "f79470c2afbdb583882235160180a63d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Producto 1"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Descripción del producto 1"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 19.99
+                                    },
+                                    "stock": {
+                                        "type": "integer",
+                                        "example": 100
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Producto creado exitosamente"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    },
+                    "422": {
+                        "description": "Error de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/products/{id}": {
+            "get": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Obtener un producto por ID",
+                "operationId": "bce9073931fb7b044595209476587a35",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Producto encontrado"
+                    },
+                    "404": {
+                        "description": "Producto no encontrado"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Eliminar un producto",
+                "operationId": "0fc020dce677361974d68193a62f9b18",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Producto eliminado exitosamente"
+                    },
+                    "404": {
+                        "description": "Producto no encontrado"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Actualizar un producto existente",
+                "operationId": "4d6f226e1744057aef5814b4b5be041c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Producto 1"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Descripción del producto 1"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 19.99
+                                    },
+                                    "stock": {
+                                        "type": "integer",
+                                        "example": 100
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Producto actualizado exitosamente"
+                    },
+                    "404": {
+                        "description": "Producto no encontrado"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Autenticación con JWT usando el header Authorization: Bearer {token}",
+                "name": "Authorization",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Autenticación",
+            "description": "Autenticación"
+        },
+        {
+            "name": "Usuario",
+            "description": "Usuario"
+        },
+        {
+            "name": "Categorías",
+            "description": "Categorías"
+        },
+        {
+            "name": "Productos",
+            "description": "Productos"
+        }
+    ]
+}

@@ -6,8 +6,7 @@ use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use App\Services\CategoryService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations as OA;
 
 class CategoryController extends Controller
 {
@@ -15,6 +14,22 @@ class CategoryController extends Controller
     {
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/categories",
+     *     summary="Obtener todas las categorías",
+     *     tags={"Categorías"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de categorías",
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *     ),
+     * )
+     */
     public function getCategories(): JsonResponse
     {
         $categories = Category::all();
@@ -22,6 +37,32 @@ class CategoryController extends Controller
         return response()->json($categories);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/categories/{id}",
+     *     summary="Obtener una categoría por ID",
+     *     tags={"Categorías"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Categoría encontrada",
+     *     ),
+     *     @OA\Response(
+     *       response=404,
+     *       description="Categoría no encontrada",
+     *     ),
+     *     @OA\Response(
+     *       response=401,
+     *       description="No autorizado",
+     *     ),
+     * )
+     */
     public function getCategoryById(int $id): JsonResponse
     {
         $category = Category::find($id);
@@ -35,6 +76,34 @@ class CategoryController extends Controller
         return response()->json($category);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/categories",
+     *     summary="Crear una nueva categoría",
+     *     tags={"Categorías"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="name", type="string", example="Electronics"),
+     *             @OA\Property(property="description", type="string", example="Category for electronic products"),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Categoría creada exitosamente",
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="No autorizado",
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación",
+     *     ),
+     * )
+     */
     public function createCategory(CategoryRequest $request): JsonResponse
     {
         $category = $this->service->create($request->validated());
@@ -42,6 +111,36 @@ class CategoryController extends Controller
         return response()->json($category, 201);
     }
 
+    /**
+     * @OA\Patch(
+     *     path="/api/categories/{id}",
+     *     summary="Actualizar una categoría existente",
+     *     tags={"Categorías"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="name", type="string", example="Electronics"),
+     *             @OA\Property(property="description", type="string", example="Category for electronic products"),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Categoría actualizada exitosamente",
+     *     ),
+     *     @OA\Response(
+     *       response=404,
+     *       description="Categoría no encontrada",
+     *     ),
+     * )
+     */
     public function updateCategory(CategoryRequest $request, int $id): JsonResponse
     {
         $category = Category::find($id);
@@ -56,6 +155,28 @@ class CategoryController extends Controller
         return response()->json($category);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/categories/{id}",
+     *     summary="Eliminar una categoría",
+     *     tags={"Categorías"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Categoría eliminada exitosamente",
+     *     ),
+     *     @OA\Response(
+     *       response=404,
+     *       description="Categoría no encontrada",
+     *     ),
+     * )
+     */
     public function deleteCategory(int $id): JsonResponse
     {
         $category = Category::find($id);
