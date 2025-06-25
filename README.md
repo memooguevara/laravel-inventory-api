@@ -110,18 +110,44 @@ enum Role: string {
   - ProductRequest.php
 
 ## 🐳 5. Uso con Docker
-Puedes levantar todo el entorno de desarrollo con Docker usando docker-compose.
+Este proyecto incluye configuración básica para levantar el entorno completo con PHP-FPM, Nginx y PostgreSQL usando Docker.
+
+### 🧱 Requisitos
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+
+### 📁 Estructura relevante
+```plaintext
+.docker
+├── php
+│   └── Dockerfile
+├── nginx
+│   └── default.conf
+docker-compose.yml
+```
 
 ### ▶️ Levantar el proyecto
 
 ```bash
 docker-compose up -d
 ```
+
 ### 📦 Acceder al contenedor
 
 ```bash
-docker exec -it inventario-api-app bash
+docker compose exec -it php bash
 ```
+
+### 🛠️ Resolución de errores comunes
+
+Si ves errores como Permission denied sobre storage o bootstrap/cache, asegúrate de dar permisos:
+
+```bash
+docker composer exec -it php bash
+chown -R www-data:www-data storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
+```
+
 
 ## 👨‍💻 Autor
 Desarrollado por [Jonathan Guevara (@memooguevara)](https://github.com/memooguevara).
